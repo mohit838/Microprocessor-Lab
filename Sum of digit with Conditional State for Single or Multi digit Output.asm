@@ -19,10 +19,10 @@
 		
 		;First number
 		MOV AH,1   
-        INT 21H
-        SUB AL,'0'
+        	INT 21H
+        	SUB AL,'0'
         
-        MOV BL,AL
+        	MOV BL,AL
         
 		MOV AH,2
 		MOV DL,0DH       
@@ -37,10 +37,10 @@
 		
 		;Second number
 		MOV AH,1   
-        INT 21H
-        SUB AL,'0'   
+        	INT 21H
+        	SUB AL,'0'   
         
-        MOV CL,AL
+        	MOV CL,AL
 		  
 	
 		;OPARATIONS
@@ -69,12 +69,12 @@
 		MOV AH,9
 		INT 21H
 		   
-        MOV DL,BL
-        ADD DL,30H
-        MOV AH,2   
-        INT 21H
+       		MOV DL,BL
+        	ADD DL,30H
+        	MOV AH,2   
+        	INT 21H
         
-        MOV AH, 4CH
+        	MOV AH, 4CH
 		INT 21H
           
           
@@ -96,20 +96,20 @@
 		MOV AH,0
 		      
 		MOV BH,10
-        DIV BH
+        	DIV BH
 
-        MOV BL,AL
-        MOV CL,AH   ;REMAINDER
+        	MOV BL,AL
+        	MOV CL,AH   ;REMAINDER
 
-        MOV DL,BL
-        ADD DL,30H
-        MOV AH,2   
-        INT 21H
+        	MOV DL,BL
+        	ADD DL,30H
+        	MOV AH,2   
+        	INT 21H
 
-        MOV DL,CL
-        ADD DL,30H
-        MOV AH,2   
-        INT 21H
+        	MOV DL,CL
+        	ADD DL,30H
+        	MOV AH,2   
+        	INT 21H
         
 		MOV AH, 4CH
 		INT 21H
