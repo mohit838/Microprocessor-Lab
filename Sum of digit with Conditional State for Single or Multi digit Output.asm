@@ -41,24 +41,30 @@
         SUB AL,'0'   
         
         MOV CL,AL
-		
+		  
+	
 		;OPARATIONS
 		ADD BL,CL
-		
+		 
+		 
+		 
 		;CONDITIONS
 		MOV AL,9
 		CMP AL,BL
-		JNG PRINT
+		JNG PRINT_1
+		JG PRINT_2
+		
+		
 		
 		;IF CONDITION FALSE
+		PRINT_1:
 		MOV AH,2
 		MOV DL,0DH       
 		INT 21H
 		
 		MOV DL,0AH
-		INT 21H 
-		 
-		 
+		INT 21H
+		
 		LEA DX, STRING_5
 		MOV AH,9
 		INT 21H
@@ -67,9 +73,13 @@
         ADD DL,30H
         MOV AH,2   
         INT 21H
+        
+        MOV AH, 4CH
+		INT 21H
           
-        ;IF CONDITION TRUE  
-		PRINT:
+          
+		;IF CONDITION TRUE  
+		PRINT_2:
 		MOV AH,2
 		MOV DL,0DH       
 		INT 21H
@@ -100,8 +110,7 @@
         ADD DL,30H
         MOV AH,2   
         INT 21H
-		
-		
+        
 		MOV AH, 4CH
 		INT 21H
 	MAIN ENDP
