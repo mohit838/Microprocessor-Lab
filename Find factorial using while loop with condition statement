@@ -1,0 +1,108 @@
+.MODEL SMALL
+.STACK 100H
+
+.DATA
+	STRING_1 DB 'Enter number: $'
+	STRING_2 DB 'Factorial: $'
+.CODE
+	MAIN PROC
+		MOV AX, @DATA
+		MOV DS, AX
+		
+		LEA DX, STRING_1
+		MOV AH, 9
+		INT 21H 
+		
+	;Number
+		MOV AH,1   
+        INT 21H
+        SUB AL,'0'
+        
+        MOV BL,AL
+        MOV BH,AL
+        	 
+	;CONDITIONS
+		MOV AL,BL
+		CMP AL,0
+		JNG PRINT_1
+		JG PRINT_2
+
+		
+;IF VALUE '0' THEN FACTORIAL WILL BE '1' 
+
+	;IF CONDITION 0
+		PRINT_1:
+		MOV AH,2
+		MOV DL,0DH       
+		INT 21H
+		
+		MOV DL,0AH
+		INT 21H
+		
+		LEA DX, STRING_2
+		MOV AH,9
+		INT 21H
+		   
+        MOV DL,1
+        ADD DL,30H
+        MOV AH,2   
+        INT 21H
+        
+        MOV AH, 4CH
+		INT 21H
+                   
+	;IF CONDITION NOT 0  
+		PRINT_2:
+		MOV AH,2
+		MOV DL,0DH       
+		INT 21H
+		
+		MOV DL,0AH
+		INT 21H
+		      
+		LEA DX, STRING_2
+		MOV AH,9
+		INT 21H
+		      
+;Factorial operation START-------------------------------------------
+    ;INSERT VALUE
+        MOV AL,BH
+          
+    ;INITIAL 
+         MOV CL,1
+    
+	LOOP: 
+        CMP CL,4
+        JGE FACTORIAL_OP 
+         
+    ;OPERATION 
+        MOV BH,CL
+        MUL BH
+        INC CL
+        JMP LOOP 
+        
+	FACTORIAL_OP: 
+        MOV AH,0
+		      
+		MOV BH,10
+        DIV BH
+
+        MOV BL,AL
+        MOV CL,AH   ;REMAINDER
+
+        MOV DL,BL
+        ADD DL,30H
+        MOV AH,2   
+        INT 21H
+
+        MOV DL,CL
+        ADD DL,30H
+        MOV AH,2   
+        INT 21H
+
+;FACTORIAL OPERATION END-----------------------------------------
+        
+		MOV AH, 4CH
+		INT 21H
+	MAIN ENDP
+END MAIN
