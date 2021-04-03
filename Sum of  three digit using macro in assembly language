@@ -1,0 +1,122 @@
+;//PREDEFINE MACRO COMMAND
+
+;STRING OUTPUT MACRO
+MACRO STRING S
+  LEA DX,S
+	MOV AH,9
+	INT 21H
+ENDM
+
+;TWO DIGIT NUMBER INPUT
+MACRO INPUT
+    MOV AH,1H   
+    INT 21H
+
+    SUB AL,'0'  
+    MOV CL,AL
+     
+    MOV AH,01H  
+    INT 21H
+
+    SUB AL,'0'  
+
+    XCHG AL,CL
+          
+    MOV AH,10    
+    MUL AH
+    ADD AL,CL
+ENDM
+
+;//PRINT COMMAND MACRO
+MACRO PRINTER
+    ADD DL,30H
+    MOV AH,2   
+    INT 21H
+ENDM
+
+.MODEL SMALL
+.STACK 100H
+.DATA
+	M1 DB 'Enter first number: $'
+	M2 DB 'Enter second number: $' 
+	M3 DB 'Enter third number: $'
+	M4 DB 'Total_Sum: $'
+.CODE
+	MAIN PROC
+		MOV AX, @DATA
+		MOV DS, AX
+		
+	 ;FIRST NUMBER
+		STRING M1
+    INPUT 
+    MOV BL,AL
+        
+   CALL NEWLINE
+        
+   ;SECOND NUMBER
+	  STRING M2
+		INPUT 
+    MOV BH,AL
+    
+		CALL NEWLINE
+		  
+	 ;THIRD NUMBER
+		STRING M3
+		INPUT 
+    MOV CH,AL    ;NOT NESSESARY 
+        
+	;OPETATION AREA START
+		 
+		ADD BH,CH
+	  ADD BL,BH
+		 
+	;OPERATION AREA END
+		
+	 ;PRINT RESULT WITH THREE DIGIT
+		    CALL NEWLINE
+		    STRING M4
+		
+		    MOV AL,BL
+		     
+		    MOV AH,0    ;REMAINDER SET '0' (IMPORTANT)
+		      
+		    MOV BH,100
+        DIV BH
+
+        MOV BL,AL    ;FIRST NUMBER OF RESULT
+        
+        MOV AL,AH
+        
+        MOV AH,0    ;REMAINDER SET '0' (IMPORTANT)
+        
+        MOV BH,10
+        DIV BH
+        
+        MOV CL,AL    ;SECOND NUMBER OF RESULT
+        MOV BH,AH    ;THIRD NUMBER OF RESULT
+        
+        MOV DL,BL
+        PRINTER
+
+        MOV DL,CL
+        PRINTER
+        
+        MOV DL,BH
+        PRINTER
+        
+		    MOV AH, 4CH
+		    INT 21H
+		
+	MAIN ENDP
+	
+	;//PREDEFINE NEWLINE COMMAND
+		NEWLINE PROC
+		    MOV AH,2
+		    MOV DL,0DH       
+		    INT 21H
+		
+		    MOV DL,0AH
+		    INT 21H     
+		    RET
+		NEWLINE ENDP
+END MAIN
