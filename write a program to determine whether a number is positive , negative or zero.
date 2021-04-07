@@ -1,0 +1,146 @@
+;MACRO COMMAND START------------------------------
+;STRING PRINT
+MACRO STRP P
+    LEA DX,P
+	MOV AH,9
+	INT 21H
+ENDM
+
+;DIGIT NUMBER INPUT
+MACRO INPUT1
+    MOV AH,1  
+    INT 21H
+    SUB AL,'0'
+ENDM
+MACRO INPUT2
+    MOV AH,1  
+    INT 21H
+    SUB AL,'0'
+    
+    MOV CL,AL
+    
+    MOV AH,1  
+    INT 21H
+    SUB AL,'0'  
+
+    XCHG AL,CL
+          
+    MOV AH,10    
+    MUL AH
+    ADD AL,CL
+ENDM 
+
+;OUTPUTS
+MACRO POSITIVE
+    INPUT1
+    CALL NEWLINE
+    STRP STRING_2
+    TERMINATION
+ENDM
+MACRO NEGATIVE
+    INPUT2
+    CALL NEWLINE
+    STRP STRING_3
+    TERMINATION
+ENDM
+MACRO POSITIVE2
+    CALL NEWLINE
+    STRP STRING_2
+    TERMINATION
+ENDM
+MACRO ZERO
+    CALL NEWLINE
+    STRP STRING_4
+    TERMINATION
+ENDM
+
+;TERMINATION CODE
+MACRO TERMINATION
+    MOV AH, 4CH
+	INT 21H
+ENDM
+;MACRO COMMAND END--------------------------------
+;THE MAIN CODE START HERE
+.MODEL SMALL
+.STACK 100H
+.DATA
+	STRING_1 DB 'Enter number: $'
+	STRING_2 DB 'Number is positve. $'
+	STRING_3 DB 'Number is negative. $'
+	STRING_4 DB 'Number is zero. $'
+.CODE
+	MAIN PROC
+		MOV AX, @DATA
+		MOV DS, AX
+		
+	   ;FIRST NUMBER
+		STRP STRING_1
+		MOV AH,1  
+        INT 21H
+        SUB AL,'0'
+        
+        MOV BL,AL
+
+       ;OPERATION START HERE---------------------------- 
+        CMP BL,0
+        JG BOX1      ;FIRST INPUT IS GREATER THAN ZERO '0'
+        JNG BOX2     ;FIRST INPUT IS LESS THAN ZERO '0' OR EQUAL ZERO '0'
+    BOX1:
+        POSITIVE
+                
+    BOX2:
+        MOV CL,1
+        NEG CL        ;NEGATION OF '1' = '-1'
+        CMP BL,CL
+        JG CHECK      ;IF FIRST DIGIT IS ZERO '0' AND GREATER THAN '-1'
+        JNG CHECK1    ;IF FIRST DIGIT IS NEGATIVE SIGN '-' AND LESS THAN '-1'
+        
+        CHECK:
+            MOV CL,1
+            CMP BL,CL
+            JNG REPEAT   ;IF FIRST DIGIT IS ZERO '0' AND LESS THAN '1'
+            
+            REPEAT:
+                INPUT1      ;SECOND INPUT AFTER ZERO '0'
+                MOV BL,AL
+                CMP BL,0
+                JG BOX3     ;SECOND INPUT IS GREATER THAN ZERO '0'
+                JNG BOX4    ;IF SECOND INPUT IS AGAIN ZERO '0'
+                
+                BOX3:
+                    POSITIVE2
+                
+                ;AGAIN CHAECK THE SECOND INPUT IS ZERO-------------
+                BOX4:
+                    MOV CL,1
+                    NEG CL
+                    CMP BL,CL
+                    JG CHECK2
+
+                    CHECK2:
+                        MOV CL,1
+                        CMP BL,CL
+                        JNG ZERO
+                        
+                        ZERO:
+                           ZERO 
+                 ;CHECKING COMPLETE IF IT IS ZERO '0'
+         
+        CHECK1:
+            NEGATIVE
+            
+		;OPERATION END HERE---------------------------- 	
+	MAIN ENDP
+	
+	;NEWLINE COMMAND STRAT---------------------
+	NEWLINE PROC
+	    MOV AH,2
+		MOV DL,0DH       
+		INT 21H
+		
+		MOV DL,0AH
+		INT 21H
+		RET
+	ENDP
+    ;NEWLINE COMMAND END------------------------
+END MAIN
