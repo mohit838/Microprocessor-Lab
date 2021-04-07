@@ -1,0 +1,127 @@
+;MACRO COMMAND START------------------------------
+;STRING PRINT
+MACRO STRP P
+    LEA DX,P
+	MOV AH,9
+	INT 21H
+ENDM
+;NUMBER INPUT
+MACRO INPUT
+    MOV AH,1   
+    INT 21H
+    SUB AL,'0'
+ENDM
+;NUMBER PRINT
+MACRO PRINT
+    ADD DL,30H
+    MOV AH,2   
+    INT 21H
+ENDM
+;FIND SMALL PRINT
+MACRO FIND_SMALL
+    MOV AH,0    ;REMAINDER MUST BE '0' (IMPORTANT)
+		      
+	MOV BH,10
+    DIV BH
+
+    MOV BL,AL
+    MOV CL,AH
+
+    MOV DL,BL
+    PRINT
+
+    MOV DL,CL
+    PRINT
+ENDM
+;MACRO COMMAND END--------------------------------
+
+;THE MAIN CODE START HERE
+.MODEL SMALL
+.STACK 100H
+.DATA
+	STRING_1 DB 'Enter first number: $'
+	STRING_2 DB 'Enter second number: $'
+	STRING_3 DB 'Enter third number: $'
+	STRING_4 DB 'Smallest number is: $'
+.CODE
+	MAIN PROC
+		MOV AX, @DATA
+		MOV DS, AX
+		
+	   ;FIRST NUMBER
+		STRP STRING_1 
+		INPUT
+        MOV BL,AL 
+        
+        CALL NEWLINE
+        
+       ;SECOND NUMBER
+        STRP STRING_2 
+		INPUT
+        MOV BH,AL
+        
+        CALL NEWLINE
+        
+        STRP STRING_3 
+		INPUT
+        MOV CH,AL
+        
+        CALL NEWLINE
+        
+       ;OPERATION START HERE----------------------------
+		CMP BL,BH
+		JNG FIND_1
+		JG FIND_2
+  
+      FIND_1:
+		CMP BL,CH
+		JNG FIND_4
+		JG FIND_5
+        
+      FIND_2:
+        CMP BH,CH
+		JNG FIND_5
+		JG FIND_3
+      
+      FIND_3:
+        STRP STRING_4
+        MOV AL,CH
+        FIND_SMALL
+        
+        ;TERMINATE
+        MOV AH, 4CH
+		INT 21H
+        
+      FIND_4:
+        STRP STRING_4
+        MOV AL,BL
+        FIND_SMALL
+        
+        ;TERMINATE
+        MOV AH, 4CH
+		INT 21H
+		
+      FIND_5:
+        STRP STRING_4
+        MOV AL,BH
+        FIND_SMALL
+        
+        ;TERMINATE
+		MOV AH, 4CH
+		INT 21H
+		;OPERATION END HERE----------------------------
+		
+	MAIN ENDP
+	
+	;NEWLINE COMMAND STRAT---------------------
+	NEWLINE PROC
+	    MOV AH,2
+		MOV DL,0DH       
+		INT 21H
+		
+		MOV DL,0AH
+		INT 21H
+		RET
+	ENDP
+    ;NEWLINE COMMAND END------------------------
+END MAIN
