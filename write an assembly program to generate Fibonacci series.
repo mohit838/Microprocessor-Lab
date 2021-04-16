@@ -1,0 +1,150 @@
+;MACRO COMMAND START------------------------------
+;STRING PRINT
+MACRO STRP P
+    LEA DX,P
+	MOV AH,9
+	INT 21H
+ENDM
+;NUMBER INPUT
+MACRO INPUT
+    MOV AH,1   
+    INT 21H
+    SUB AL,'0'
+ENDM
+;INITAL
+MACRO INITIAL
+    MOV BH,AL
+ENDM
+;NUMBER PRINT
+MACRO PRINTING
+    MOV AH,0    ;REMAINDER MUST BE '0' (IMPORTANT)
+		      
+	MOV BH,10
+    DIV BH
+    
+    MOV BH,AH
+    
+    MOV DL,AL
+    PRINT
+    
+    MOV DL,BH
+    PRINT
+ENDM
+MACRO PRINT
+    ADD DL,30H
+    MOV AH,2   
+    INT 21H
+ENDM 
+
+;TERMINATION
+MACRO EXIT
+    MOV AH, 4CH
+	INT 21H
+ENDM
+;MACRO COMMAND END--------------------------------
+
+;THE MAIN CODE START HERE
+.MODEL SMALL
+.STACK 100H
+.DATA
+	STRING_1 DB 'Enter number: $'
+	STRING_2 DB 'Series: $'
+	STRING_3 DB '  $'
+.CODE
+	MAIN PROC
+		MOV AX, @DATA
+		MOV DS, AX
+		
+	   ;FIRST NUMBER
+		STRP STRING_1 
+		INPUT
+		INITIAL
+        CALL NEWLINE
+        
+       ;OPERATION START HERE---------------------------- 
+        STRP STRING_2
+
+       ;INITIAL LOOP
+         MOV CL,1
+	LOOP:
+        CMP CL,BH  ;(If doing something like user define then directly assign BH = 6/7/8 etc)
+        JG F_OP               ;For first number it shows 4 digit 
+        JNG FIRST             ;If you input n=4 then it creates first four number 01 01 02 03 where n=1
+                              ;Thne n=2 to n=4 it creats 05 08 04
+    FIRST:
+        CMP CL,1
+        JE DO
+        JNE FIND
+        
+        DO:
+            MOV BL,1
+            MOV AL,BL
+            
+            MOV DH,BH   ;EXIT INPUT STORE (If user define then ignor this line)
+            PRINTING
+            MOV BH,DH   ;EXIT INPUT STORE (If user define then ignor this line)
+            
+            STRP STRING_3
+            
+            MOV CH,1
+            MOV AL,CH 
+            
+            MOV DH,BH   ;EXIT INPUT STORE  (If user define then ignor this line)
+            PRINTING
+            MOV BH,DH   ;EXIT INPUT STORE (If user define then ignor this line)
+            
+            STRP STRING_3
+            
+            MOV BL,1
+            
+            ADD BL,CH
+            MOV AL,BL
+            
+            MOV DH,BH   ;EXIT INPUT STORE (If user define then ignor this line)
+            PRINTING
+            MOV AL,BL
+            
+            MOV BH,DH   ;EXIT INPUT STORE (If user define then ignor this line)
+            
+            STRP STRING_3
+        
+        JMP FIND
+        
+        FIND:
+            ADD CH,BL
+            MOV AL,CH
+            
+            MOV DH,BH   ;EXIT INPUT STORE (If user define then ignor this line)        
+            
+            PRINTING
+            MOV AL,CH
+            MOV CH,BL
+            MOV BL,AL
+            
+            MOV BH,DH   ;EXIT INPUT STORE (If user define then ignor this line)
+            ;SUB BH,1
+            STRP STRING_3
+
+        INC CL
+        JMP LOOP 
+        
+	F_OP:
+	    EXIT
+        
+        
+		;OPERATION END HERE------------------------------
+		
+	MAIN ENDP
+	
+	;NEWLINE COMMAND STRAT---------------------
+	NEWLINE PROC
+	    MOV AH,2
+		MOV DL,0DH       
+		INT 21H
+		
+		MOV DL,0AH
+		INT 21H
+		RET
+	ENDP
+    ;NEWLINE COMMAND END------------------------
+END MAIN
