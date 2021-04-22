@@ -1,0 +1,45 @@
+;THE MAIN CODE START HERE
+.MODEL SMALL
+.STACK 100H 
+.DATA  
+    N DB 99H,  33H, 88H, 22H, 11H
+    COUNT DB 5
+.CODE
+	MAIN PROC
+		MOV AX, @DATA
+		MOV DS, AX
+        ;OPERATION START HERE------------------------------ 
+        
+        MOV CH,COUNT      ;N=5
+        DEC CH             ;N=(N-1) LOOP CONTUNIUE 1 TO 4  
+                           
+        
+        LOOP1:             ;for(i=(n-1); i>1; i--)
+        MOV SI, 0
+        MOV DL, CH 
+         
+            LOOP2:            
+            MOV BL,N[SI]
+            MOV CL,N[SI+1]
+            CMP BL,CL
+            
+            JB NEXT       ;ACCENDING
+            ;JL NEXT       ;DECENDING
+            
+            MOV N[SI], CL         ;SWAPING 2ND TO 1ST
+            MOV N[SI+1], BL       ;SWAPING 1ST TO 2ND
+            
+            NEXT:
+            INC SI
+            DEC DL
+            JNZ LOOP2
+            LOOP LOOP1
+        
+		;OPERATION END HERE--------------------------------
+	    EXIT:
+	    MOV AH, 4CH
+	    INT 21H
+	    			
+	MAIN ENDP
+	
+END MAIN
