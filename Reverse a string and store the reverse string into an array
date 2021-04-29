@@ -1,0 +1,59 @@
+.MODEL SMALL
+.STACK 100H
+.DATA
+STRING_1  DB 'ENTER YOUR STRING : $'
+STRING_2  DB 'REVERSE STRING IS : $'
+ARRAY_LIST  DW "$"
+
+.CODE
+ MAIN PROC
+    MOV AX,@DATA
+    MOV DS,AX
+
+
+    LEA DX,STRING_1
+    MOV AH,9
+    INT 21H
+
+
+    XOR CX,CX
+    MOV AH,1
+
+    ;OPERATION START HERE----------------------------------
+
+    INPUT:
+        INT 21H
+        CMP AL,0DH
+        JE PRINT
+        PUSH AX
+        INC CX
+        JMP INPUT
+
+    PRINT:
+        MOV AH,2
+		MOV DL,0DH       
+		INT 21H
+		
+		MOV DL,0AH
+		INT 21H
+		
+        LEA DX,STRING_2
+        MOV AH,9
+        INT 21H
+        
+        MOV SI,0
+        MOV AH,2
+
+   OUTPUT:
+        POP DX
+        INT 21H 
+        MOV ARRAY_LIST[SI],DX
+        INC SI
+        LOOP OUTPUT
+
+   ;OPERATION END HERE-------------------------------------
+   
+   MOV AH,4CH
+   INT 21H
+   MAIN ENDP
+ END MAIN
