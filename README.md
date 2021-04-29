@@ -22,3 +22,5 @@ Microprocessor Lab Codes For Practice. Using Emulator 8086
 
 11. Write an assembly program to generate Fibonacci series
 
+12. Write an assembly program to reverse a string and store the reverse string into an array
+
